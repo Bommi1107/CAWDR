@@ -19,6 +19,8 @@ To get started with the Zomato Clone project:
 
 ![Zomato Clone Preview](app-preview.png)
 
+![SERVER CLONNING](ngrok_clonning.png)
+
 ## Technologies Used
 
 - HTML
