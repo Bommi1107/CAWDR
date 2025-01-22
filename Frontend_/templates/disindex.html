@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Disaster Shield - Server Logs</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        #main-footer {
+            color: #FFFFFF;
+            font-family: "Segoe UI";
+            background: #2B2B2B;
+            text-align: center;
+            margin-top: 75px;
+            padding: 16px;
+            bottom: 8px;
+        }
+        .server-card {
+            margin-top: 20px;
+        }
+        .card-title {
+            font-weight: bold;
+        }
+        .log-table {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+        .log-table table {
+            width: 100%;
+        }
+        .chart-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        .btn-stop {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="#"><b>SERVER MONITOR</b></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">Logs</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/prediction">Verify Transactions</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+<br/><br/><br/>
+<div class="container">
+    <h1 class="text-center">Server Logs - AWS & Azure</h1>
+    <p class="text-center">Live monitoring of AWS and Azure server logs along with resource usage metrics and running graphs.</p>
+    
+    <!-- Server Status Cards with Stop Buttons -->
+    <div class="row">
+        <div class="col-md-6 server-card">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fa fa-server"></i> AWS Server Status</h5>
+                    <p id="aws-status">Status: <span class="badge badge-success">Running</span></p>
+                    <p>IP Address: 192.168.1.100</p>
+                    <p>Uptime: 34 days 12 hours</p>
+                    <button class="btn btn-danger btn-stop" onclick="stopServer('aws')">Stop AWS Server</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 server-card">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fa fa-server"></i> Azure Server Status</h5>
+                    <p id="azure-status">Status: <span class="badge badge-success">Running</span></p>
+                    <p>IP Address: 192.168.1.101</p>
+                    <p>Uptime: 22 days 5 hours</p>
+                    <button class="btn btn-danger btn-stop" onclick="stopServer('azure')">Stop Azure Server</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Running Graph -->
+    <div class="chart-container">
+        <h5><i class="fa fa-line-chart"></i> Server Load Graph</h5>
+        <canvas id="serverLoadChart"></canvas>
+    </div>
+
+    <!-- Log Table -->
+    <div class="log-table">
+        <h5><i class="fa fa-list"></i> Latest Server Logs</h5>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Server</th>
+                    <th>Log Level</th>
+                    <th>Message</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>2024-10-08 10:45:30</td>
+                    <td>AWS</td>
+                    <td><span class="badge badge-warning">Warning</span></td>
+                    <td>CPU usage is high</td>
+                </tr>
+                <tr>
+                    <td>2024-10-08 10:46:12</td>
+                    <td>Azure</td>
+                    <td><span class="badge badge-danger">Error</span></td>
+                    <td>Memory leak detected</td>
+                </tr>
+                <tr>
+                    <td>2024-10-08 10:47:01</td>
+                    <td>AWS</td>
+                    <td><span class="badge badge-success">Info</span></td>
+                    <td>Scheduled backup completed</td>
+                </tr>
+                <tr>
+                    <td>2024-10-08 10:48:45</td>
+                    <td>Azure</td>
+                    <td><span class="badge badge-info">Info</span></td>
+                    <td>New connection established</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer id="main-footer">
+    <p>&copy; 2024 Disaster Shield. All Rights Reserved.</p>
+</footer>
+
+<!-- Chart Script -->
+<script>
+    // Global server state to track whether servers are running
+    var servers = {
+        aws: { running: true, label: 'AWS CPU Load (%)', color: 'rgba(255, 99, 132, 1)', data: generateRandomData() },
+        azure: { running: true, label: 'Azure CPU Load (%)', color: 'rgba(54, 162, 235, 1)', data: generateRandomData() }
+    };
+
+    // Function to generate random data for the graph
+    function generateRandomData() {
+        return Array.from({ length: 7 }, () => Math.floor(Math.random() * (80 - 50) + 50));
+    }
+
+    // Chart initialization
+    var ctx = document.getElementById('serverLoadChart').getContext('2d');
+    var serverLoadChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['10:45', '10:46', '10:47', '10:48', '10:49', '10:50', '10:51'],
+            datasets: [
+                {
+                    label: servers.aws.label,
+                    data: servers.aws.data,
+                    borderColor: servers.aws.color,
+                    borderWidth: 2,
+                    fill: false
+                },
+                {
+                    label: servers.azure.label,
+                    data: servers.azure.data,
+                    borderColor: servers.azure.color,
+                    borderWidth: 2,
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Time'
+                    }
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'CPU Load (%)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Function to simulate stopping a server
+    function stopServer(server) {
+        servers[server].running = false;
+        
+        // Update server status
+        document.getElementById(server + '-status').innerHTML = 'Status: <span class="badge badge-danger">Closed</span>';
+        
+        // Update chart data to drop to 0 after stopping
+        let serverDataset = serverLoadChart.data.datasets.find(dataset => dataset.label === servers[server].label);
+        serverDataset.data = [0, 0, 0, 0, 0, 0, 0];
+        
+        // Update the chart
+        serverLoadChart.update();
+    }
+</script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>
