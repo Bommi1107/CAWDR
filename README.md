@@ -44,26 +44,6 @@ ________________________________________
 3.	Initiate data replication or failover tests via the Dashboard.
 4.	Monitor real-time metrics and alerts for system health.
 ________________________________________
-## App Preview
-
-![FRONT END](app_preview.png)
-
-![DASHBOARD](Dashboard_of_DR.png)
-
-![LOGIN PAGE](login_page.jpg)
-
-![AWS PAGE](AWS_S3_Bucket.jpg)
-
-![METRICS](Metrics.jpg)
-
-![SERVER CRASHED](Server%20crashed.png)
-
-![DR OCCUR](DR%20occured.png)
-
-![DR RECOVERED SUCCESSFULLY](DR%20recovery%20has%20successfully.png)
-
-![AZURE PAGE](Azure%20Dashboard.png)
-________________________________________
 # Contributing
 Contributions are welcome! Please follow these steps:
 1.	Fork this repository.
